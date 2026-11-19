@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="ScanPro — Scanner de documents, OCR, PDF et éditeur Word">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ScanPro</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ===================== ÉCRAN PRINCIPAL (activity_main.xml) ===================== -->
+<section id="view-home" class="view view-dark" data-route="">
+  <div id="adContainer" class="ad-container"></div>
+
+  <div class="preview-area">
+    <canvas id="imgPreview" class="img-preview hidden"></canvas>
+
+    <div id="welcomeOverlay" class="welcome">
+      <img src="icons/logo.png" alt="" class="welcome-logo">
+      <div class="welcome-title">ScanPro</div>
+      <div class="welcome-sub" data-i18n="auto_detect"></div>
+    </div>
+
+    <button id="btnBack" class="icon-btn overlay-tl hidden" data-icon="back" data-i18n-title="back"></button>
+    <button id="btnRotate" class="icon-btn overlay-tr hidden" data-icon="rotate" data-i18n-title="rotate"></button>
+    <div id="tvPageIndicator" class="page-indicator hidden">1 / 1</div>
+  </div>
+
+  <div class="footer">
+    <div class="row center-v">
+      <div id="tvCredits" class="credits grow"></div>
+      <button id="btnSettings" class="icon-btn small muted" data-icon="settings" data-i18n-title="settings"></button>
+    </div>
+
+    <div class="row gap mb8">
+      <button id="btnMyDocuments" class="btn outlined grow" data-icon="gallery" data-icon-color="#eab308" data-i18n="my_documents"></button>
+      <button id="btnWordEditor" class="btn outlined grow" data-icon="edit" data-icon-color="#3b82f6" data-i18n="word_editor"></button>
+    </div>
+
+    <button id="btnCapture" class="btn filled big bold" style="--btn:#0ea5e9" data-icon="camera" data-i18n="scan_document"></button>
+    <button id="btnWhatsapp" class="btn filled mt8 hidden" style="--btn:#22c55e" data-icon="share" data-i18n="send_whatsapp"></button>
+
+    <div id="tvAmount" class="amount hidden"></div>
+
+    <div id="exportActions" class="mt8 hidden">
+      <div class="row gap">
+        <button id="btnExportPdf" class="btn filled grow" style="--btn:#0ea5e9" data-icon="pdf" data-i18n="save_pdf"></button>
+        <button id="btnExportImage" class="btn outlined grow" data-icon="image" data-icon-color="#ec4899" data-i18n="save_image"></button>
+      </div>
+      <button id="btnDrive" class="btn outlined mt8" data-icon="share" data-icon-color="#10b981" data-i18n="upload_drive"></button>
+    </div>
+
+    <button id="btnHome" class="btn outlined danger mt8" data-icon="back" data-icon-color="#f87171" data-i18n="home"></button>
+  </div>
+</section>
+
+<!-- ===================== SCANNER (remplace ML Kit Document Scanner) ===================== -->
+<section id="view-scanner" class="view view-black hidden">
+  <div class="scanner-stage">
+    <video id="scanVideo" playsinline muted autoplay></video>
+    <div id="scanNoCamera" class="scan-nocam hidden" data-i18n="camera_unavailable"></div>
+  </div>
+  <div class="scanner-top">
+    <button id="scanClose" class="icon-btn" data-icon="close"></button>
+    <div id="scanCount" class="scan-count"></div>
+    <button id="scanDone" class="btn filled small-btn hidden" style="--btn:#0ea5e9" data-i18n="done"></button>
+  </div>
+  <div class="scanner-bottom">
+    <button id="scanGallery" class="icon-btn round" data-icon="image" data-i18n-title="import_gallery"></button>
+    <button id="scanShutter" class="shutter" data-i18n-title="capture"></button>
+    <div id="scanThumb" class="scan-thumb"></div>
+  </div>
+  <input id="scanFile" type="file" accept="image/*" multiple hidden>
+</section>
+
+<!-- ===================== RECADRAGE (bords auto + ajustement manuel) ===================== -->
+<section id="view-crop" class="view view-black hidden">
+  <div class="scanner-top">
+    <button id="cropCancel" class="icon-btn" data-icon="close"></button>
+    <div class="scan-count" data-i18n="crop_image"></div>
+    <button id="cropOk" class="btn filled small-btn" style="--btn:#0ea5e9" data-i18n="ok"></button>
+  </div>
+  <div id="cropStage" class="crop-stage">
+    <canvas id="cropCanvas"></canvas>
+    <svg id="cropSvg" class="crop-svg"></svg>
+  </div>
+  <div class="crop-bottom">
+    <button id="cropRotate" class="icon-btn round" data-icon="rotate" data-i18n-title="rotate"></button>
+    <button id="cropFull" class="icon-btn round" data-icon="fullscreen"></button>
+  </div>
+</section>
+
+<!-- ===================== MES DOCUMENTS (activity_documents.xml) ===================== -->
+<section id="view-documents" class="view view-dark hidden" data-route="documents">
+  <header class="topbar h56">
+    <button class="icon-btn js-back" data-icon="back" data-i18n-title="home"></button>
+    <div class="topbar-title" data-i18n="documents_title"></div>
+    <button id="btnSort" class="icon-btn muted" data-icon="sort" data-i18n-title="sort"></button>
+  </header>
+  <div id="tvDocCount" class="doc-count"></div>
+  <div id="emptyState" class="empty hidden" data-i18n="no_documents"></div>
+  <div id="docGrid" class="doc-grid hidden"></div>
+</section>
+
+<!-- ===================== ÉDITEUR WORD (activity_word_editor.xml) ===================== -->
+<section id="view-editor" class="view view-white hidden" data-route="editor">
+  <header class="topbar h52 editor-header">
+    <button class="icon-btn js-back" data-icon="back" data-i18n-title="back"></button>
+    <input id="etFileName" class="file-name" type="text" data-i18n-placeholder="text_file_default_name" autocomplete="off">
+    <span id="tvCharCount" class="char-count">0</span>
+  </header>
+
+  <div class="toolbar">
+    <button id="btnBold" class="tb-btn" style="font-weight:bold">B</button>
+    <button id="btnItalic" class="tb-btn" style="font-style:italic">I</button>
+    <button id="btnUnderline" class="tb-btn" style="text-decoration:underline">U</button>
+    <span class="tb-sep"></span>
+    <button id="btnSizeDown" class="tb-btn small">A-</button>
+    <span id="tvFontSize" class="tb-size">15</span>
+    <button id="btnSizeUp" class="tb-btn small">A+</button>
+    <span class="tb-sep"></span>
+    <button id="btnAlignLeft" class="tb-btn align active" data-align="left" data-icon="align_left"></button>
+    <button id="btnAlignCenter" class="tb-btn align" data-align="center" data-icon="align_center"></button>
+    <button id="btnAlignRight" class="tb-btn align" data-align="right" data-icon="align_right"></button>
+    <span class="tb-sep"></span>
+    <button id="btnColor" class="tb-btn" style="color:#ef4444;font-weight:bold" data-i18n-title="text_color">A</button>
+    <span class="tb-sep"></span>
+    <button id="btnUndo" class="tb-btn big">↩</button>
+    <button id="btnRedo" class="tb-btn big">↪</button>
+  </div>
+
+  <div id="etContent" class="editor-content" contenteditable="true" spellcheck="true" data-i18n-placeholder="text_editor_hint"></div>
+
+  <div class="editor-footer">
+    <button id="btnSaveDocx" class="btn filled grow small-text" style="--btn:#2563eb" data-i18n="save_docx"></button>
+    <button id="btnSavePdf" class="btn filled grow small-text" style="--btn:#0ea5e9" data-i18n="save_pdf"></button>
+    <button id="btnSendWhatsapp" class="btn filled grow small-text" style="--btn:#25D366" data-i18n="whatsapp_pdf"></button>
+  </div>
+</section>
+
+<!-- ===================== PARAMÈTRES (activity_settings.xml) ===================== -->
+<section id="view-settings" class="view view-dark hidden" data-route="settings">
+  <header class="topbar h56">
+    <button class="icon-btn js-back" data-icon="back" data-i18n-title="back"></button>
+    <div class="topbar-title" data-i18n="settings"></div>
+  </header>
+  <div class="settings-body">
+    <button id="btnPrivacyPolicy" class="btn settings-btn" data-i18n="privacy_policy"></button>
+    <button id="btnManagePrivacy" class="btn settings-btn hidden" data-i18n="manage_privacy"></button>
+    <button id="btnInstall" class="btn settings-btn hidden" data-i18n="install_app"></button>
+    <label class="settings-lang">
+      <span data-i18n="select_language"></span>
+      <select id="selLanguage"></select>
+    </label>
+  </div>
+</section>
+
+<!-- Calques globaux -->
+<div id="progressBar" class="progress hidden"><div class="spinner"></div></div>
+<div id="toastHost" class="toast-host"></div>
+<div id="dialogHost"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
