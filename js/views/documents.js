@@ -91,8 +91,8 @@ async function showFileMenu(rec, anchor) {
       const ok = await DocumentStore.rename(rec.id, `${clean}.${extOf(rec.name)}`);
       toast(ok ? t('rename') : t('error_documents'));
       if (ok) await loadDocuments();
-    } catch (e) {
-      toast(`${t('error_documents')}: ${e.message}`);
+    } catch {
+      toast(t('error_documents'));
     }
   } else if (idx === 1) {
     await shareFile(rec.blob, rec.name);

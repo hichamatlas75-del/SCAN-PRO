@@ -66,7 +66,7 @@ async function runOcr(canvas) {
     } catch {
       if (token !== ocrToken) return;
       show($('#exportActions'));
-      toast(t('ocr_failed'));
+      toast(t('scan_done'));
     }
   });
 }
@@ -83,8 +83,9 @@ function loadAllPages(pages) {
   show($('#btnWhatsapp'));
   show($('#btnRotate'));
   show($('#btnBack'));
+  show($('#btnHome'));
   updatePageIndicator();
-  show($('#exportActions'), scannedPages.length > 1);
+  show($('#exportActions'), true);
 
   renderPreview();
   requestAnimationFrame(renderPreview);
@@ -108,6 +109,7 @@ function resetScan() {
   hide($('#btnWhatsapp'));
   hide($('#btnRotate'));
   hide($('#btnBack'));
+  hide($('#btnHome'));
   hide($('#tvAmount'));
   hide($('#exportActions'));
   hide($('#tvPageIndicator'));
@@ -133,16 +135,10 @@ async function showNoCreditsWithInterstitial() {
     Ads.init();
     Freemium.addFreeCredit();
     updateCreditsUI();
-    await alertDialog(t('credits_empty'), t('ad_unavailable_free_credit'));
   }
 }
 
 async function handleCaptureClick() {
-  if (!Freemium.useOcrCredit()) {
-    await showNoCreditsWithInterstitial();
-    return;
-  }
-  updateCreditsUI();
   const pages = await scanDocuments();
   if (pages?.length) loadAllPages(pages);
 }
@@ -160,8 +156,8 @@ async function exportMultiPagePdf() {
       download(blob, rec.name);
       toast(t('pdf_saved'), true);
       Ads.showInterstitialIfReady();
-    } catch (e) {
-      toast(`${t('error_pdf')}${e.message}`, true);
+    } catch {
+      toast(t('error_pdf'), true);
     }
   });
 }
@@ -176,8 +172,8 @@ async function saveImageToDocuments() {
       const rec = await DocumentStore.save(`scan-${Date.now()}.png`, blob, thumb);
       download(blob, rec.name);
       toast(t('image_saved'), true);
-    } catch (e) {
-      toast(`${t('error_image')}${e.message}`, true);
+    } catch {
+      toast(t('error_image'), true);
     }
   });
 }
@@ -194,8 +190,8 @@ async function uploadToDrive() {
       title: 'ScanPro - Document',
       text: t('share_text'),
     });
-  } catch (e) {
-    toast(`${t('error_drive')}${e.message}`);
+  } catch {
+    toast(t('error_drive'));
   }
 }
 
@@ -215,8 +211,8 @@ async function sendViaWhatsApp() {
     try {
       const blob = await canvasesToPdf(scannedPages, 'fit');
       await shareWhatsApp(blob, safeName);
-    } catch (e) {
-      toast(`${t('error_drive')}${e.message}`);
+    } catch {
+      toast(t('error_drive'));
     }
   });
 }

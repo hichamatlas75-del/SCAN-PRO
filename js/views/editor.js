@@ -176,8 +176,8 @@ async function saveDocx() {
       const rec = await DocumentStore.save(`${name}.docx`, blob);
       download(blob, rec.name);
       toast(`${t('docx_saved')} ${rec.name}`);
-    } catch (e) {
-      toast(`${t('error_pdf')}${e.message}`);
+    } catch {
+      toast(t('error_pdf'));
     }
   });
 }
@@ -194,8 +194,8 @@ async function savePdf() {
       const rec = await DocumentStore.save(`${name}.pdf`, blob, thumb);
       download(blob, rec.name);
       toast(t('pdf_saved'));
-    } catch (e) {
-      toast(`${t('error_pdf')}${e.message}`);
+    } catch {
+      toast(t('error_pdf'));
     }
   });
 }
@@ -209,8 +209,8 @@ async function sendWhatsApp() {
       const pages = renderTextPages(paras);
       const blob = await canvasesToPdf(pages, 'full');
       await shareWhatsApp(blob, `${name}.pdf`);
-    } catch (e) {
-      toast(`${t('error_drive')}${e.message}`);
+    } catch {
+      toast(t('error_drive'));
     }
   });
 }

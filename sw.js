@@ -1,4 +1,4 @@
-const CACHE = 'scanpro-pwa-v1';
+const CACHE = 'scanpro-pwa-v2';
 const ASSETS = [
   './',
   './index.html',

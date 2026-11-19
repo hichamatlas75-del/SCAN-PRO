@@ -1,7 +1,7 @@
 {
   "name": "ScanPro",
   "short_name": "ScanPro",
-  "description": "ScanPro — Scanner de documents, OCR, PDF et éditeur Word",
+  "description": "ScanPro — Scanner de documents et éditeur mobile",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

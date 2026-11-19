@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#0f172a">
-  <meta name="description" content="ScanPro — Scanner de documents, OCR, PDF et éditeur Word">
+  <meta name="description" content="ScanPro — Scanner de documents et éditeur mobile">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,17 +16,29 @@
 </head>
 <body>
 
-<!-- ===================== ÉCRAN PRINCIPAL (activity_main.xml) ===================== -->
+<!-- ===================== ÉCRAN PRINCIPAL ===================== -->
 <section id="view-home" class="view view-dark" data-route="">
+  <header class="home-topbar">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" class="brand-icon">
+      <span class="brand-title">ScanPro</span>
+    </div>
+    <button id="btnSettings" class="icon-btn small muted" data-icon="settings" data-i18n-title="settings"></button>
+  </header>
+
   <div id="adContainer" class="ad-container"></div>
 
   <div class="preview-area">
     <canvas id="imgPreview" class="img-preview hidden"></canvas>
 
     <div id="welcomeOverlay" class="welcome">
-      <img src="icons/logo.png" alt="" class="welcome-logo">
-      <div class="welcome-title">ScanPro</div>
-      <div class="welcome-sub" data-i18n="auto_detect"></div>
+      <div class="welcome-card">
+        <div class="welcome-icon-wrap">
+          <img src="icons/logo.png" alt="" class="welcome-logo">
+        </div>
+        <div class="welcome-title">ScanPro</div>
+        <div class="welcome-sub" data-i18n="auto_detect"></div>
+      </div>
     </div>
 
     <button id="btnBack" class="icon-btn overlay-tl hidden" data-icon="back" data-i18n-title="back"></button>
@@ -35,10 +47,7 @@
   </div>
 
   <div class="footer">
-    <div class="row center-v">
-      <div id="tvCredits" class="credits grow"></div>
-      <button id="btnSettings" class="icon-btn small muted" data-icon="settings" data-i18n-title="settings"></button>
-    </div>
+    <div id="tvCredits" class="credits hidden"></div>
 
     <div class="row gap mb8">
       <button id="btnMyDocuments" class="btn outlined grow" data-icon="gallery" data-icon-color="#eab308" data-i18n="my_documents"></button>
@@ -58,7 +67,7 @@
       <button id="btnDrive" class="btn outlined mt8" data-icon="share" data-icon-color="#10b981" data-i18n="upload_drive"></button>
     </div>
 
-    <button id="btnHome" class="btn outlined danger mt8" data-icon="back" data-icon-color="#f87171" data-i18n="home"></button>
+    <button id="btnHome" class="btn outlined danger mt8 hidden" data-icon="back" data-icon-color="#f87171" data-i18n="home"></button>
   </div>
 </section>
 
